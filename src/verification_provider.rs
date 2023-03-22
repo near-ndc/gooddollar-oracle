@@ -1,5 +1,3 @@
-use once_cell::sync::Lazy;
-use std::str::FromStr;
 use web3::{
     contract::{self, Contract, Options},
     ethabi,
