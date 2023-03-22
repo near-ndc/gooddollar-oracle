@@ -4,9 +4,6 @@
       "url": "https://rpc.fuse.io/" 
   },
   "signer": {
-      "credentials": {
-          "seckey": "",
-          "pubkey": ""
-      }
+    "credentials": null
   }
 }
