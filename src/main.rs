@@ -42,7 +42,8 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
             config
                 .signer
                 .credentials
-                .pubkey
+                .seckey
+                .public_key()
                 .unwrap_as_ed25519()
                 .as_ref()
         )
@@ -200,7 +201,7 @@ fn create_verified_account_response(
     .map_err(|_| AppError::SigningError)?;
     let signature = credentials.seckey.sign(&raw_message);
 
-    if !signature.verify(&raw_message, &credentials.pubkey) {
+    if !signature.verify(&raw_message, &credentials.seckey.public_key()) {
         return Err(AppError::SigningError);
     }
 
@@ -220,7 +221,7 @@ fn create_verified_account_response(
 
 #[cfg(test)]
 mod tests {
-    use crate::signer::{self, SignerConfig, SignerCredentials};
+    use crate::signer::{SignerConfig, SignerCredentials};
     use crate::{
         create_verified_account_response, AppConfig, User, VerificationReq, VerifiedAccountToken,
     };
@@ -239,10 +240,10 @@ mod tests {
 
     #[test]
     fn test_create_verified_account_response() {
-        let (seckey, pubkey) = signer::generate_keys();
+        let seckey = near_crypto::SecretKey::from_random(near_crypto::KeyType::ED25519);
         let config = AppConfig {
             signer: SignerConfig {
-                credentials: SignerCredentials { seckey, pubkey },
+                credentials: SignerCredentials { seckey },
             },
             listen_address: "0.0.0.0:8080".to_owned(),
             verification_provider: Default::default(),
@@ -264,7 +265,7 @@ mod tests {
                 .unwrap()
         )
         .unwrap()
-        .verify(&decoded_bytes, &credentials.pubkey));
+        .verify(&decoded_bytes, &credentials.seckey.public_key()));
 
         let decoded_msg = VerifiedAccountToken::try_from_slice(&decoded_bytes).unwrap();
 
