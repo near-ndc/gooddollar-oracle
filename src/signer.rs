@@ -22,14 +22,14 @@ impl<'de> Deserialize<'de> for SignerCredentials {
         let properties: std::collections::HashMap<String, String> =
             Deserialize::deserialize(deserializer).unwrap_or_default();
 
-        let raw_seckey = match std::env::var("SECKEY") {
+        let raw_seckey = match std::env::var("SIGNING_KEY") {
           Err(VarError::NotPresent) => properties.get("seckey").cloned(),
           Err(VarError::NotUnicode(invalid_data)) => {
-              return Err(de::Error::custom(format!("Invalid SECKEY {:?}", invalid_data)))
+              return Err(de::Error::custom(format!("Invalid SIGNING_KEY {:?}", invalid_data)))
           },
           Ok(value) => Some(value),
         }.ok_or_else(|| {
-            D::Error::custom("Secret key should be provided either with SECKEY env variable or within configuration file")
+            D::Error::custom("Secret key should be provided either with SIGNING_KEY env variable or within configuration file")
         })?;
 
         let seckey = SecretKey::from_str(&raw_seckey).map_err(|e| {
