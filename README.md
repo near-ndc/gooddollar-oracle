@@ -9,14 +9,14 @@ be used instead.
 ### Credentials
 
 Use `near generate-key i-am-human-credentials --networkId mainnet` to generate new credentials.
-The above command will create a file `~/.near-credentials/mainnet/i-am-human-credentials.json` with required secret key.
+The above command will create a file `~/.near-credentials/mainnet/i-am-human-credentials.json` with required private key.
 
 The `private_key` property from a resulting file could be either passed with environment variable `SIGNING_KEY` or set via configuration file as:
 
 ```
   "signer": {
     "credentials": {
-      "seckey": "{{PUT_SECRET_KEY_HERE}}"
+      "signingKey": "{{PUT_PRIVATE_KEY_HERE}}"
     }
   }
 ```
